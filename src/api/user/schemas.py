@@ -9,15 +9,19 @@ user = api.model(
         "username": String(),
         "email": String(),
         "created_at": String(),
+        "password": String(required=True),
+        "role_id": Integer,
     },
 )
 
 user_expect = api.model(
-    "user_expert",
+    "user_expect",
     {
-        "username": String(),
-        "email": String(),
+        "username": String(required=True),
+        "email": String(required=True),
+        "password": String(required=True),
     },
+    strict=True,
 )
 
 user_response = api.model(
@@ -36,4 +40,9 @@ user_list_response = api.model(
         "data": Nested(user, skip_none=True, allow_null=True, as_list=True),
         "errors": List(String),
     },
+)
+
+user_login_expect = api.model(
+    "user_login_expect",
+    {"email": String(required=True), "password": String(required=True)},
 )

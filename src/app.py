@@ -9,6 +9,8 @@ from api import blueprint
 from config import settings
 from model.base import db
 
+logging.basicConfig(level=logging.INFO)
+
 app = Flask(__name__, static_folder="../static")
 app.app_context().push()
 
