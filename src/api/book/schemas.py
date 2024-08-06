@@ -39,6 +39,7 @@ book_update_expect = api.model(
         "author": String(required=False),
         "quantity": Integer(required=False, min=1),
     },
+    strict=True,
 )
 
 

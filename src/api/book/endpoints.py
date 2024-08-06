@@ -16,7 +16,7 @@ class BookList(Resource):
     @api.doc("Add a book")
     @api.expect(schemas.book_expect, validate=True)
     @api.marshal_list_with(schemas.book_response, skip_none=True)
-    def post(self) -> Tuple[Dict, int]:
+    def post(self)-> Tuple[Dict, int]:
         """
         Add a new book
 
@@ -55,9 +55,9 @@ class BookList(Resource):
 @api.route("/<int:book_id>")
 class UpdateBook(Resource):
     @api.doc("Update a book")
-    @api.expect(schemas.book_update_expect, validate=False)
+    @api.expect(schemas.book_update_expect, validate=True)
     @api.marshal_with(schemas.update_book_response, skip_none=True)
-    def patch(self, book_id: int) -> Tuple[Dict, int]:
+    def patch(self, book_id: int)-> Tuple[Dict, int]:
         """
         Update a book
 
@@ -72,16 +72,12 @@ class UpdateBook(Resource):
 
         book = Book.get_by_id(book_id)
         if not book:
-            return failure_response(["Book not found."], HTTPStatus.NOT_FOUND)
+            return failure_response("Book not found.", HTTPStatus.NOT_FOUND)
 
         if "quantity" in api.payload:
             if api.payload["quantity"] < book.available_quantity:
-                return failure_response(
-                    [
-                        "Quantity should be greater than or equal to available quantity of books"
-                    ],
-                    HTTPStatus.BAD_REQUEST,
-                )
+                err = "Quantity should be greater than or equal to available quantity of books"
+                return failure_response(err, HTTPStatus.BAD_REQUEST)
 
         if "title" not in api.payload:
             api.payload["title"] = book.title
@@ -92,9 +88,8 @@ class UpdateBook(Resource):
         if Book.get_by_title_author(
             api.payload["title"], api.payload["author"], book_id
         ):
-            return failure_response(
-                "Book with same title and author already exists", HTTPStatus.BAD_REQUEST
-            )
+            err = "Book with same title and author already exists"
+            return failure_response(err, HTTPStatus.BAD_REQUEST)
 
         Book.update(book_id, api.payload)
 
@@ -117,6 +112,6 @@ class UpdateBook(Resource):
 
         book = Book.get_by_id(book_id)
         if not book:
-            return failure_response(["Book Not Found."], HTTPStatus.NOT_FOUND)
+            return failure_response("Book Not Found.", HTTPStatus.NOT_FOUND)
 
         return success_response(book, HTTPStatus.OK)

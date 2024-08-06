@@ -1,4 +1,4 @@
-from typing import Union
+# from typing import Union
 
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import Column
@@ -19,7 +19,7 @@ class Book(Base):
     @classmethod
     def get_by_title_author(
         cls, title: str, author: str, book_id: int = None
-    ) -> Union["Book", None]:
+    ): # -> Union["Book", None]:
         """
         Get Book by title and author
 

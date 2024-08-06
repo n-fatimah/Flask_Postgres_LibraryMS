@@ -1,9 +1,6 @@
-import hashlib
-import logging
 from http import HTTPStatus
 from typing import Dict, Tuple
 
-from flask import g, jsonify, request
 from flask_restx import Resource
 
 from api.endpoint import schemas
@@ -27,13 +24,12 @@ class CreateRole(Resource):
             Endpoint
         """
         api.logger.info("Add endpoint")
-        endpoint = Endpoint.get_by_route_method(
-            api.payload["route"], api.payload["method"]
+        endpoint = Endpoint.get_by_route_method_role_id(
+            api.payload["route"], api.payload["method"], api.payload["role_id"]
         )
         if endpoint:
-            return failure_response(
-                ["Endpoint already exists."], HTTPStatus.BAD_REQUEST
-            )
+            err = "Endpoint already exists."
+            return failure_response(err, HTTPStatus.BAD_REQUEST)
 
         endpoint = Endpoint(**api.payload).insert()
-        return success_response(endpoint, HTTPStatus.CREATED)
+        return success_response(endpoint, HTTPStatus.BAD_REQUEST)

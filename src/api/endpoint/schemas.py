@@ -4,7 +4,7 @@ from . import api
 
 endpoint = api.model(
     "endpoint",
-    {"id": Integer(), "route": String(), "method": String(), "roles": List(Integer)},
+    {"id": Integer(), "route": String(), "method": String(), "role_id": Integer()},
 )
 
 endpoint_expect = api.model(
@@ -12,7 +12,7 @@ endpoint_expect = api.model(
     {
         "route": String(required=True),
         "method": String(required=True),
-        "roles": List(Integer, required=True),
+        "role_id": Integer(min=1),
     },
     strict=True,
 )

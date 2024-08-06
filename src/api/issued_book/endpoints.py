@@ -18,7 +18,7 @@ class IssueBook(Resource):
     @api.doc("Issue a book")
     @api.expect(schemas.issued_book_expect, validate=True)
     @api.marshal_with(schemas.issued_book_response, skip_none=True)
-    def post(self) -> Tuple[Dict, int]:
+    def post(self)-> Tuple[Dict, int]:
         """
         Issue a book to a user
 
@@ -29,14 +29,14 @@ class IssueBook(Resource):
 
         book = Book.get_by_id(api.payload["book_id"])
         if not book:
-            return failure_response(["Book not found."], HTTPStatus.NOT_FOUND)
+            return failure_response("Book not found.", HTTPStatus.NOT_FOUND)
 
         if book.available_quantity <= 0:
-            return failure_response(["Book not available."], HTTPStatus.BAD_REQUEST)
+            return failure_response("Book not available.", HTTPStatus.BAD_REQUEST)
 
         user = User.get_by_id(api.payload["user_id"])
         if not user:
-            return failure_response(["User not found."], HTTPStatus.BAD_REQUEST)
+            return failure_response("User not found.", HTTPStatus.BAD_REQUEST)
 
         issued_book = IssuedBook(**api.payload).insert()
 
@@ -50,7 +50,7 @@ class IssueBook(Resource):
     @api.param("page")
     @api.param("per_page")
     @api.marshal_list_with(schemas.issued_book_response, skip_none=True)
-    def get(self) -> Tuple[Dict, int]:
+    def get(self)-> Tuple[Dict, int]:
         """
         Get all Issued Books
 

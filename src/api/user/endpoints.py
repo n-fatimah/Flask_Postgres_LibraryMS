@@ -35,10 +35,7 @@ class SignUp(Resource):
 
         hashed_password = hashlib.sha256(api.payload["password"].encode()).hexdigest()
         api.payload["password"] = hashed_password
-        role_id = user.role_id
 
-        token = generate_jwt(user.id, role_id)
-        logging.info(f"token: {token}")
         user = User(**api.payload).insert()
 
         return success_response(user, HTTPStatus.CREATED)
@@ -48,7 +45,7 @@ class SignUp(Resource):
 class Login(Resource):
     @api.doc("User login")
     @api.expect(schemas.user_login_expect, validate=True)
-    @api.marshal_list_with(schemas.user_response, skip_none=True)
+    # @api.marshal_list_with(schemas.user_response, skip_none=True)
     @auth("/user/login")
     def post(self):
         """
@@ -63,16 +60,17 @@ class Login(Resource):
 
         user = User.get_by_email(email)
         if not user or not user.check_password(user.password, password):
+            err="Invalid email or password."
             return failure_response(
-                ["Invalid email or password."], HTTPStatus.UNAUTHORIZED
+                err, HTTPStatus.UNAUTHORIZED
             )
 
         role_id = user.role_id
-        token = generate_jwt(user.id, role_id)
+        # token = generate_jwt(user.id, role_id)
+        token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxMCwicm9sZV9pZCI6MiwiZXhwIjoxNzIyOTQzMzY1LCJpYXQiOjE3MjI4NTY5NjV9.NySFeLUUiL06nB5xY9G1LRYwnfU5f2Eg2fxl1EuFVR4"
         logging.info(f"token: {token}")
 
-        return success_response(user, HTTPStatus.OK)
-
+        return jsonify({"token":token,'status':HTTPStatus.CREATED})
 
 @api.route("/list")
 class UserList(Resource):
@@ -88,9 +86,9 @@ class UserList(Resource):
         Returns:
             List of users
         """
+        api.logger.info("List users")
         page = request.args.get("page", default=1, type=int)
         per_page = request.args.get("per_page", default=4, type=int)
-        api.logger.info("List users")
         users = User.list(page=page, per_page=per_page)
 
         return success_response(users, HTTPStatus.OK)
@@ -100,6 +98,7 @@ class UserList(Resource):
 class UserItem(Resource):
     @api.doc("Get user by id")
     @api.marshal_list_with(schemas.user_response, skip_none=True)
+    @auth("/user/<int:user_id>")
     def get(self, user_id: int) -> Tuple[Dict, int]:
         """
         Get user by id
@@ -117,7 +116,7 @@ class UserItem(Resource):
         return success_response(user, HTTPStatus.OK)
 
     @api.doc("Delete user")
-    @auth
+    @auth("/user/<int:user_id>")
     def delete(self, user_id: int) -> Tuple[dict, int]:
         """
         Delete user
@@ -132,4 +131,5 @@ class UserItem(Resource):
             return failure_response(["User does not exist."], HTTPStatus.NOT_FOUND)
         logging.info(g.user.email, " is deleting ", user.email)
         user.delete()
+        print(f"deleted user with id {user_id} ")
         return success_response(user, HTTPStatus.OK)

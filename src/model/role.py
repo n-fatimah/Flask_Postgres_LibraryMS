@@ -13,6 +13,7 @@ class Role(Base):
     name = Column(String(80), unique=True)
 
     user = relationship("User", back_populates="role")
+    endpoint = relationship("Endpoint", back_populates="role")
 
     @classmethod
     def get_by_name(

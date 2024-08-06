@@ -15,8 +15,7 @@ def auth(value: str):
     Authorize user
 
     Args:
-        value: value to check if used as @auth(value) otherwise callable
-
+        value
     Raises:
         Unauthorized: Authorization Missing, Invalid Token or Unauthorized user
 
@@ -29,7 +28,7 @@ def auth(value: str):
         def wrapper_function(*args, **kwargs):
             g.user = None
 
-            logging.info(f"Permission is {value}")
+            logging.info(f"Value is {value}")
 
             authorization = request.headers.get("Authorization")
             env = settings.env
@@ -50,8 +49,6 @@ def auth(value: str):
                         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
                         g.user = User.get_by_id(payload["user_id"])
 
-                        logging.info(f"payload {payload} ")
-
                         role_id = payload["role_id"]
                         logging.info(f"role_id {role_id}")
 
@@ -66,17 +63,14 @@ def auth(value: str):
 
                 if g.user:
                     required_roles = Endpoint.get_roles_for_route(value)
-                    logging.info(f"req roles {required_roles}")
-                    if role_id in required_roles:
-                        logging.info("Allowed as role_id exists in required Roles ")
-                        return f(*args, **kwargs)
+                    for item in required_roles:
+                        if item.role_id == role_id:
+                            logging.info(f"item.role id is {item.role_id}")
+                            logging.info("Authorized user")
+                            return f(*args, **kwargs)
 
             raise Unauthorized({"status": "nok", "errors": ["Unauthorized user."]})
 
         return wrapper_function
-
-    if callable(value):
-        f = value
-        return decorator(f)
 
     return decorator

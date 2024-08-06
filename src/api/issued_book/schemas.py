@@ -2,9 +2,6 @@ from flask_restx.fields import Integer, List, Nested, String
 
 from . import api
 
-# from book.schemas import book
-# from user.schemas import user
-
 user = api.model(
     "user",
     {"id": Integer(), "username": String(), "email": String(), "created_at": String()},
@@ -28,8 +25,8 @@ issued_book = api.model(
         "book_id": Integer(),
         "user_id": Integer(),
         "status": String(),
-        "book": Nested(book, skip_none=True),
-        "user": Nested(user, skip_none=True),
+        "book": Nested(book, skip_none=True, allow_null=True),
+        "user": Nested(user, skip_none=True, allow_null=True),
     },
 )
 issued_book_expect = api.model(
@@ -45,7 +42,7 @@ issued_book_response = api.model(
     "issued_book_response",
     {
         "status": String(description="ok|nok"),
-        "data": Nested(issued_book, skip_none=True, allow_null=True, as_list=True),
+        "data": Nested(issued_book, skip_none=True, allow_null=True),
         "errors": List(String),
     },
 )

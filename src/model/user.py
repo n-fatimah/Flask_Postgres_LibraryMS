@@ -19,9 +19,9 @@ class User(Base):
     password = Column(String(64), unique=True)
 
     role_id = Column(
-        Integer,
+        Integer(),
         ForeignKey("role.id"),
-        nullable=False,
+        nullable=True,
         default=DefaultRole.CUSTOMER.value,
     )
 

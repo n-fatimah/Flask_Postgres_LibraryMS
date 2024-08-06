@@ -11,8 +11,6 @@ from .issued_book.endpoints import api as issued_book_api
 from .role.endpoints import api as role_api
 from .endpoint.endpoints import api as endpoint_api
 
-# from .access.endpoints import api as access_api
-
 blueprint = Blueprint("api", __name__)
 
 authorizations = {
@@ -38,7 +36,6 @@ api.add_namespace(book_api)
 api.add_namespace(issued_book_api)
 api.add_namespace(role_api)
 api.add_namespace(endpoint_api)
-# api.add_namespace(access_api)
 
 
 @api.errorhandler(Unauthorized)

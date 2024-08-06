@@ -10,7 +10,7 @@ user = api.model(
         "email": String(),
         "created_at": String(),
         "password": String(required=True),
-        "role_id": Integer,
+        "role_id": Integer(),
     },
 )
 
@@ -37,7 +37,7 @@ user_list_response = api.model(
     "user_list_response",
     {
         "status": String(description="ok|nok"),
-        "data": Nested(user, skip_none=True, allow_null=True, as_list=True),
+        "data": Nested(user, skip_none=True, allow_null=True),
         "errors": List(String),
     },
 )

@@ -20,7 +20,6 @@ def failure_response(
         Tuple containing the response dictionary and HTTP status code
     """
 
-    # logging.info(f"is: {type(errors)}")
     return {
         "status": "nok",
         "errors": [errors] if isinstance(errors, str) else errors,

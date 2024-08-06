@@ -1,9 +1,7 @@
-import hashlib
-import logging
+
 from http import HTTPStatus
 from typing import Dict, Tuple
 
-from flask import g, jsonify, request
 from flask_restx import Resource
 
 from api.role import schemas
@@ -29,7 +27,8 @@ class CreateRole(Resource):
         api.logger.info("Create Role")
         role = Role.get_by_name(api.payload["name"])
         if role:
-            return failure_response(["Role already exists."], HTTPStatus.BAD_REQUEST)
+            err="Role already exists."
+            return failure_response(err, HTTPStatus.BAD_REQUEST)
 
         role = Role(**api.payload).insert()
         return success_response(role, HTTPStatus.CREATED)
