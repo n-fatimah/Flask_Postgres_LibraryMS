@@ -1,20 +1,17 @@
 import pytest
-from requests_flask_adapter import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from app import app
 from model.base import Base, db
+from requests_flask_adapter import Session
 
 base_url = "http://127.0.0.1:5000/api/v1/"
 
 
 @pytest.fixture(autouse=True, scope="session")
 def engine():
-    engine = create_engine(
-        "sqlite:///:memory:",
-        isolation_level="READ UNCOMMITTED",
-    )
+    engine = create_engine("sqlite:///:memory:", isolation_level="READ UNCOMMITTED")
     Base.metadata.create_all(engine)
     db.session.commit()
     return engine

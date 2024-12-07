@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from datetime import datetime
+import hashlib
+from datetime import datetime, timedelta
 from typing import Union
 
+import jwt
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.ext.declarative import as_declarative, declared_attr
+
+from config import settings
 
 db = SQLAlchemy(session_options={"autoflush": False})
 
@@ -16,7 +20,7 @@ class Base(object):
     id = Column(Integer, primary_key=True, autoincrement=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=True)
     updated_at = Column(
-        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True,
+        DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=True
     )
 
     @declared_attr
@@ -80,7 +84,7 @@ class Base(object):
         return row
 
     @classmethod
-    def list(cls) -> Union[Base, None]:
+    def list(cls, page: int, per_page: int) -> Union[Base, None]:
         """
         List all rows
 
@@ -90,5 +94,4 @@ class Base(object):
         Returns:
             All rows
         """
-        rows = db.session.query(cls).all()
-        return rows
+        return db.session.query(cls).offset((page - 1) * per_page).limit(per_page).all()

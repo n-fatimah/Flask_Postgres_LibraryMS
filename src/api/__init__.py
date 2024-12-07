@@ -6,6 +6,10 @@ from flask_restx import Api
 from werkzeug.exceptions import Unauthorized
 
 from .user.endpoints import api as user_api
+from .book.endpoints import api as book_api
+from .issued_book.endpoints import api as issued_book_api
+from .role.endpoints import api as role_api
+from .endpoint.endpoints import api as endpoint_api
 
 blueprint = Blueprint("api", __name__)
 
@@ -28,6 +32,10 @@ api = Api(
 )
 
 api.add_namespace(user_api)
+api.add_namespace(book_api)
+api.add_namespace(issued_book_api)
+api.add_namespace(role_api)
+api.add_namespace(endpoint_api)
 
 
 @api.errorhandler(Unauthorized)

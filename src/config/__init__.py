@@ -2,7 +2,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any
+# from typing import Any
 
 
 class Settings:
@@ -18,7 +18,7 @@ class Settings:
             raise AttributeError(f"Can not modify settings")
         super().__delattr__(key)
 
-    def __setattr__(self, key: str, value: Any) -> None:
+    def __setattr__(self, key: str, value) -> None:
         if self.locked:
             raise AttributeError(f"Can not modify settings")
         super().__setattr__(key, value)
